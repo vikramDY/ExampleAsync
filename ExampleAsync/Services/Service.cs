@@ -15,15 +15,14 @@ namespace ExampleAsync.Services
 		/// <param name="resources">Pass the URLs list.</param>
 		/// <param name="cancellationToken">Pass the cancellation token.</param>
 		/// <returns></returns>
-		public async Task DownloadService(IEnumerable<string> resources, CancellationToken cancellationToken)
+		public async Task GetContentsLengthAsync(IEnumerable<string> resources, CancellationToken cancellationToken)
 		{
-			HttpClient httpClient = new HttpClient();
 
-			List<int> contentLengths = new List<int>();
+			List<int> contentLengths = new ();
 
 			foreach (string url in resources)
 			{
-				int contentLength = await DownloadContent(url, httpClient, cancellationToken);
+				int contentLength = await GetUrlContentLengthAsync(url, cancellationToken);
 
 				contentLengths.Add(contentLength);
 			}
@@ -36,18 +35,19 @@ namespace ExampleAsync.Services
 		/// Method to process URL asynchronously.
 		/// </summary>
 		/// <param name="resourceURL"></param>
-		/// <param name="httpClient"></param>
 		/// <param name="cancellationToken"></param>
 		/// <returns>Content length for a specific URL.</returns>
-		public static async Task<int> DownloadContent(string resourceURL, HttpClient httpClient, CancellationToken cancellationToken)
+		public static async Task<int> GetUrlContentLengthAsync(string resourceURL, CancellationToken cancellationToken)
 		{
-			HttpResponseMessage httpResponse = await httpClient.GetAsync(resourceURL, cancellationToken);
+			var client = new HttpClient();
 
-			byte[] contentBytesArray = await httpResponse.Content.ReadAsByteArrayAsync(cancellationToken);
+			Task<string> getStringTask =
+				client.GetStringAsync(resourceURL, cancellationToken);
 
-			Console.WriteLine($"{resourceURL,-60} {contentBytesArray.Length,10:#,#}");
+			string contents = await getStringTask;
 
-			return contentBytesArray.Length;
+			return contents.Length;
+
 		}
 	}
 }

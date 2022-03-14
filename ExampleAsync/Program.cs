@@ -16,20 +16,20 @@ namespace ExampleAsync
 			CancellationTokenSource cancellationTokenSource = new();
 						
 			CancellationToken userCancellationToken = cancellationTokenSource.Token;
-						
-			ShowMessage(MessageConstants.cancelMessage);
+
+			Console.WriteLine(MessageConstants.cancelMessage);
 						
 			Task cancelTask = Task.Run(() =>
 			{
 				
 				while (Console.ReadKey().Key != ConsoleKey.Enter)
 				{
-					
-					ShowMessage(MessageConstants.invalidKeyMessage);
+
+					Console.WriteLine(MessageConstants.invalidKeyMessage);
 				}
 
-				
-				ShowMessage(MessageConstants.validKeyMessage);
+
+				Console.WriteLine(MessageConstants.validKeyMessage);
 
 				
 				cancellationTokenSource.Cancel();
@@ -37,18 +37,10 @@ namespace ExampleAsync
 
 			IService downloadService = new Service();
 
-			Task aggregateContentLengthsTask = downloadService.DownloadService(resources, userCancellationToken);
+			Task contentTask = downloadService.GetContentsLengthAsync(resources, userCancellationToken);
 
-			await Task.WhenAny(new[] { cancelTask, aggregateContentLengthsTask });
+			await Task.WhenAny(new[] { cancelTask, contentTask });
 		}
 
-		/// <summary>
-		/// ShowMessage
-		/// </summary>
-		/// <param name="cancelMessage">Cancel Message</param>
-		private static void ShowMessage(string cancelMessage)
-		{
-			Console.WriteLine(cancelMessage);
-		}
 	}
 }

@@ -8,6 +8,6 @@ namespace ExampleAsync.Services
 {
     public interface IService
     {
-        abstract Task DownloadService(IEnumerable<string> resourcePaths, CancellationToken userCancellationToken);
+        abstract Task GetContentsLengthAsync(IEnumerable<string> resourcePaths, CancellationToken userCancellationToken);
     }
 }
